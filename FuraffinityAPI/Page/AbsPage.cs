@@ -77,6 +77,7 @@ namespace FuraffinityAPI.Page
                     }
                     catch (HttpRequestException ex) when ((int)(ex.StatusCode ?? 0) == 503)
                     {
+                        Console.WriteLine("503 Faulted");
                         if (retry < maxRetries - 1)
                         {
                             await Task.Delay(delayMilliseconds * (retry + 1));

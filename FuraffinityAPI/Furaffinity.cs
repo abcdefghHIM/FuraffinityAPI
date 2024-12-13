@@ -74,12 +74,13 @@ namespace FuraffinityAPI
         {
             var containers = new ViewContainer[resources.Length];
             var tasks = new Task<ViewContainer>[resources.Length];
+            var uuid=Guid.NewGuid().ToString();
             for (int i = 0; i < resources.Length; i++)
             {
                 var resource = resources[i];
                 var task = new Task<ViewContainer>(() =>
                 {
-                    var obj = new ViewPage(factory.CreateClient(""), semaphore, resource.Url);
+                    var obj = new ViewPage(factory.CreateClient(uuid), semaphore, resource.Url);
                     return obj.GetViewContainerAsync().Result;
                 });
                 tasks[i] = task;
@@ -171,6 +172,12 @@ namespace FuraffinityAPI
             string format = "MMM d, yyyy h:mm tt";
             string[] wh = doc.DocumentNode.SelectSingleNode("//section[@class='info text']/div[4]/span").InnerText.Trim().Replace(" ", "").Split('x');
 
+            var tags = doc.DocumentNode.SelectNodes("//section[@class='tags-row']//a");
+            string[] a = { };
+            if (tags != null)
+            {
+                a = tags.Select(e => e.InnerText.Trim()).ToArray();
+            }
 
             ViewContainer container = new ViewContainer()
             {
@@ -190,7 +197,7 @@ namespace FuraffinityAPI
                 Gender = doc.DocumentNode.SelectSingleNode("//section[@class='info text']/div[3]/span").InnerText.Trim(),
                 Width = int.Parse(wh[0]),
                 Height = int.Parse(wh[1]),
-                Tags = doc.DocumentNode.SelectNodes("//section[@class='tags-row']//a").Select(e => e.InnerText.Trim()).ToArray()
+                Tags = a
             };
 
             return container;
