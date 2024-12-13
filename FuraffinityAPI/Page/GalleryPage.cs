@@ -24,6 +24,8 @@ namespace FuraffinityAPI.Page
         {
             var doc = await GetHtmlDocumentAsync();
             var figures = doc.DocumentNode.SelectNodes("//section[@id='gallery-gallery']//figure");
+            if (figures == null)
+                return new ResourceContainer[0];
             return Furaffinity.ParseResourceContainer(figures);
         }
 

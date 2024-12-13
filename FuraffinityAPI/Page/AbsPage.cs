@@ -46,8 +46,8 @@ namespace FuraffinityAPI.Page
                 {
                     doc = new HtmlDocument();
                     doc.LoadHtml(text);
-                    var title = doc.DocumentNode.SelectSingleNode("//title").InnerText;
-                    if (title.Contains("System Error") || title.Contains("Account disabled"))
+                    var notice = doc.DocumentNode.SelectSingleNode("//section[contains(@class,'notice-message')]");
+                    if (notice != null)
                     {
                         throw new InvalidDataException();
                     }
