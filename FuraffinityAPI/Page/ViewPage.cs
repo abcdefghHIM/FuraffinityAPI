@@ -10,7 +10,7 @@ namespace FuraffinityAPI.Page
 {
     public class ViewPage : AbsPage
     {
-        internal ViewPage(HttpClient httpClient, SemaphoreSlim semaphore, params string[] args) : base(httpClient, semaphore, args)
+        internal ViewPage(HttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
         {
         }
 

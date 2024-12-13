@@ -12,7 +12,7 @@ namespace FuraffinityAPI.Page
         private object _lock;
         private string[]? list;
 
-        internal StarPage(HttpClient httpClient, SemaphoreSlim semaphore, params string[] args) : base(httpClient, semaphore, args)
+        internal StarPage(HttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
         {
             _lock = new object();
         }

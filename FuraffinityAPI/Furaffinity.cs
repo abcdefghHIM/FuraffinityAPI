@@ -10,12 +10,12 @@ namespace FuraffinityAPI
     public class Furaffinity
     {
         internal HttpClientFactory factory;
-        internal SemaphoreSlim semaphore;
+        internal OrderedSemaphore semaphore;
 
         private Furaffinity(int maxRequest)
         {
             factory = new HttpClientFactory();
-            semaphore = new SemaphoreSlim(maxRequest);
+            semaphore = new OrderedSemaphore(maxRequest);
         }
 
         public static Furaffinity Create(int maxRequest)

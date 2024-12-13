@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,9 +15,9 @@ namespace FuraffinityAPI.Page
         private HtmlDocument? doc;
         protected HttpClient httpClient;
         protected string[] args;
-        protected SemaphoreSlim semaphore;
+        protected OrderedSemaphore semaphore;
 
-        internal AbsPage(HttpClient httpClient, SemaphoreSlim semaphore, params string[] args)
+        internal AbsPage(HttpClient httpClient, OrderedSemaphore semaphore, params string[] args)
         {
             _lock = new object();
             var url = GetUrl(args);
@@ -45,18 +46,53 @@ namespace FuraffinityAPI.Page
                 {
                     doc = new HtmlDocument();
                     doc.LoadHtml(text);
+                    var title = doc.DocumentNode.SelectSingleNode("//title").InnerText;
+                    if (title.Contains("System Error") || title.Contains("Account disabled"))
+                    {
+                        throw new InvalidDataException();
+                    }
                 }
             }
             return doc;
         }
 
+        public async Task Notify()
+        {
+            await GetHtmlDocumentAsync();
+        }
+
         protected async Task<string> GetStringAsync(string url)
         {
             await semaphore.WaitAsync();
-            string text;
-            text = await httpClient.GetStringAsync(url);
-            semaphore.Release();
-            return text;
+            try
+            {
+                int maxRetries = 3;
+                int delayMilliseconds = 1000;
+                for (int retry = 0; retry < maxRetries; retry++)
+                {
+                    try
+                    {
+                        string text = await httpClient.GetStringAsync(url);
+                        return text;
+                    }
+                    catch (HttpRequestException ex) when ((int)(ex.StatusCode ?? 0) == 503)
+                    {
+                        if (retry < maxRetries - 1)
+                        {
+                            await Task.Delay(delayMilliseconds * (retry + 1));
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+            throw new Exception();
         }
 
         public override string ToString()
