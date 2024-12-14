@@ -43,6 +43,8 @@ namespace FuraffinityAPI
                     }
                     catch (HttpRequestException ex) when ((int)(ex.StatusCode ?? 0) == 503)
                     {
+                        Console.Write(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
                         if (retry < MaxRetries - 1)
                         {
                             await Task.Delay(DelayMilliseconds * (retry + 1));
@@ -55,6 +57,8 @@ namespace FuraffinityAPI
                     }
                     catch (Exception ex) when ((ex is TaskCanceledException && !((TaskCanceledException)ex).CancellationToken.IsCancellationRequested) || ex is HttpRequestException)
                     {
+                        Console.Write(ex.Message);
+                        Console.WriteLine(ex.StackTrace);
                         if (httpClient == null)
                         {
                             throw new NullReferenceException();
@@ -74,8 +78,10 @@ namespace FuraffinityAPI
                 }
                 return text;
             }
-            catch
+            catch(Exception e)
             {
+                Console.Write(e.Message);
+                Console.WriteLine(e.StackTrace);
                 throw;
             }
         }
