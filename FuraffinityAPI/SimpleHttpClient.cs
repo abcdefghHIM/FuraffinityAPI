@@ -43,7 +43,6 @@ namespace FuraffinityAPI
                     }
                     catch (HttpRequestException ex) when ((int)(ex.StatusCode ?? 0) == 503)
                     {
-                        Console.WriteLine("503 Faulted");
                         if (retry < MaxRetries - 1)
                         {
                             await Task.Delay(DelayMilliseconds * (retry + 1));
@@ -54,7 +53,7 @@ namespace FuraffinityAPI
                             throw;
                         }
                     }
-                    catch (TaskCanceledException ex) when (!ex.CancellationToken.IsCancellationRequested)
+                    catch (Exception ex) when ((ex is TaskCanceledException && !((TaskCanceledException)ex).CancellationToken.IsCancellationRequested) || ex is HttpRequestException)
                     {
                         if (httpClient == null)
                         {
