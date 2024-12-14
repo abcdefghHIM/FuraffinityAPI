@@ -181,7 +181,7 @@ namespace FuraffinityAPI
 
             ViewContainer container = new ViewContainer()
             {
-                Rating = ParseRestriction(doc.DocumentNode.SelectSingleNode("//span[@class='category-name']").InnerText.Trim()),
+                Rating = ParseRestriction(doc.DocumentNode.SelectSingleNode("//div[@class='rating']/span[1]").InnerText.Trim()),
                 Type = ParseResourceType(doc.DocumentNode.SelectSingleNode("//section[@class='info text']/div[1]//span[1]").InnerText.Trim()),
                 Title = doc.DocumentNode.SelectSingleNode("//div[@class='submission-title']").InnerText.Trim(),
                 Description = HttpUtility.HtmlDecode(doc.DocumentNode.SelectSingleNode("//div[contains(@class,'submission-description')]").InnerText.Trim()),
