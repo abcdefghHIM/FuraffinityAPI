@@ -11,7 +11,7 @@ using System.Xml.Linq;
 
 namespace FuraffinityAPI
 {
-    internal class SimpleHttpClient: IDisposable
+    public class SimpleHttpClient: IDisposable
     {
         private bool disposed = false;
         private HttpClient? httpClient;
