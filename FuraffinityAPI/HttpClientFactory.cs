@@ -11,29 +11,26 @@ namespace FuraffinityAPI
 {
     internal class HttpClientFactory : IDisposable
     {
-        private readonly ConcurrentDictionary<string, HttpClient> httpClients;
+        private readonly ConcurrentDictionary<string, SimpleHttpClient> httpClients;
         private readonly CookieContainer cookieContainer;
         private bool disposed = false;
 
         public HttpClientFactory()
         {
-            httpClients = new ConcurrentDictionary<string, HttpClient>();
+            httpClients = new ConcurrentDictionary<string, SimpleHttpClient>();
             cookieContainer = new CookieContainer();
         }
 
-        public HttpClient CreateClient(string name)
+        public SimpleHttpClient CreateClient(string name)
         {
             if (httpClients.ContainsKey(name))
             {
                 return httpClients[name];
             }
-            var handler = new HttpClientHandler()
-            {
-                CookieContainer = cookieContainer
-            };
-            var client = new HttpClient(handler);
-            httpClients[name] = client;
-            return client;
+            var simpleHttpClient = new SimpleHttpClient();
+            simpleHttpClient.CreateHttpClient(cookieContainer);
+            httpClients[name] = simpleHttpClient;
+            return simpleHttpClient;
         }
 
         public void SetCookie(string a, string b)

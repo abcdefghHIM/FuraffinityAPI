@@ -13,7 +13,7 @@ namespace FuraffinityAPI.Page
 {
     public class UserPage : AbsPage
     {
-        internal UserPage(HttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
+        internal UserPage(SimpleHttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
         {
         }
 

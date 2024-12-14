@@ -20,7 +20,7 @@ namespace FuraffinityAPI.Page
         private ConcurrentQueue<string[]> strings;
         private Task task;
 
-        internal PageCollection(HttpClient httpClient, OrderedSemaphore semaphore, string userName)
+        internal PageCollection(SimpleHttpClient httpClient, OrderedSemaphore semaphore, string userName)
         {
             _lock = new object();
             autoReset = new AutoResetEvent(false);
@@ -111,7 +111,7 @@ namespace FuraffinityAPI.Page
             return null;
         }
 
-        internal void NewGalleryTask(HttpClient httpClient, OrderedSemaphore semaphore, string userName)
+        internal void NewGalleryTask(SimpleHttpClient httpClient, OrderedSemaphore semaphore, string userName)
         {
             string? url = $"/gallery/{userName}";
             while (true)
@@ -137,7 +137,7 @@ namespace FuraffinityAPI.Page
             }
         }
 
-        internal void NewFavoritesTask(HttpClient httpClient, OrderedSemaphore semaphore, string userName)
+        internal void NewFavoritesTask(SimpleHttpClient httpClient, OrderedSemaphore semaphore, string userName)
         {
             string? url = $"/favorites/{userName}";
             while (true)
@@ -163,7 +163,7 @@ namespace FuraffinityAPI.Page
             }
         }
 
-        internal void NewStarTask(HttpClient httpClient, OrderedSemaphore semaphore, string userName)
+        internal void NewStarTask(SimpleHttpClient httpClient, OrderedSemaphore semaphore, string userName)
         {
             string? url = $"/watchlist/by/{userName}";
             while (true)
@@ -189,7 +189,7 @@ namespace FuraffinityAPI.Page
             }
         }
 
-        internal void NewFansTask(HttpClient httpClient, OrderedSemaphore semaphore, string userName)
+        internal void NewFansTask(SimpleHttpClient httpClient, OrderedSemaphore semaphore, string userName)
         {
             string? url = $"/watchlist/to/{userName}";
             while (true)

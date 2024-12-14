@@ -8,7 +8,7 @@ namespace FuraffinityAPI.Page
 {
     public class FansPage : StarPage
     {
-        internal FansPage(HttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
+        internal FansPage(SimpleHttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
         {
         }
     }

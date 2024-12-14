@@ -9,7 +9,7 @@ namespace FuraffinityAPI.Page
 {
     public class GalleryPage : AbsPage
     {
-        internal GalleryPage(HttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
+        internal GalleryPage(SimpleHttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
         {
         }
 

@@ -9,7 +9,7 @@ namespace FuraffinityAPI.Page
 {
     public class FavoritesPage : GalleryPage
     {
-        internal FavoritesPage(HttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
+        internal FavoritesPage(SimpleHttpClient httpClient, OrderedSemaphore semaphore, params string[] args) : base(httpClient, semaphore, args)
         {
         }
 

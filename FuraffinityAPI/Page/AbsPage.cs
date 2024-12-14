@@ -13,11 +13,11 @@ namespace FuraffinityAPI.Page
         private object _lock;
         private Task<string> textHtml;
         private HtmlDocument? doc;
-        protected HttpClient httpClient;
+        protected SimpleHttpClient httpClient;
         protected string[] args;
         protected OrderedSemaphore semaphore;
 
-        internal AbsPage(HttpClient httpClient, OrderedSemaphore semaphore, params string[] args)
+        internal AbsPage(SimpleHttpClient httpClient, OrderedSemaphore semaphore, params string[] args)
         {
             _lock = new object();
             var url = GetUrl(args);
@@ -67,34 +67,17 @@ namespace FuraffinityAPI.Page
             await semaphore.WaitAsync();
             try
             {
-                int maxRetries = 3;
-                int delayMilliseconds = 1000;
-                for (int retry = 0; retry < maxRetries; retry++)
-                {
-                    try
-                    {
-                        string text = await httpClient.GetStringAsync(url);
-                        return text;
-                    }
-                    catch (HttpRequestException ex) when ((int)(ex.StatusCode ?? 0) == 503)
-                    {
-                        Console.WriteLine("503 Faulted");
-                        if (retry < maxRetries - 1)
-                        {
-                            await Task.Delay(delayMilliseconds * (retry + 1));
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
+                string text = await httpClient.SimpleGetStringAsync(url);
+                return text;
+            }
+            catch
+            {
+                throw;
             }
             finally
             {
                 semaphore.Release();
             }
-            throw new Exception();
         }
 
         public override string ToString()
