@@ -21,7 +21,7 @@ namespace FuraffinityAPI.Page
             return $"https://www.furaffinity.net{args[0]}";
         }
 
-        public async Task<ViewContainer> GetViewContainerAsync()
+        public async Task<ViewContainer?> GetViewContainerAsync()
         {
             var doc = await GetHtmlDocumentAsync();
             return Furaffinity.ParseViewContainer(doc);

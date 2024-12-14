@@ -72,13 +72,13 @@ namespace FuraffinityAPI
 
         public ViewContainer[] GetViewContainers(ResourceContainer[] resources)
         {
-            var containers = new ViewContainer[resources.Length];
-            var tasks = new Task<ViewContainer>[resources.Length];
-            var uuid=Guid.NewGuid().ToString();
+            List<ViewContainer> containers = new List<ViewContainer>();
+            var tasks = new Task<ViewContainer?>[resources.Length];
+            var uuid = Guid.NewGuid().ToString();
             for (int i = 0; i < resources.Length; i++)
             {
                 var resource = resources[i];
-                var task = new Task<ViewContainer>(() =>
+                var task = new Task<ViewContainer?>(() =>
                 {
                     var obj = new ViewPage(factory.CreateClient(uuid), semaphore, resource.Url);
                     return obj.GetViewContainerAsync().Result;
@@ -89,9 +89,12 @@ namespace FuraffinityAPI
             Task.WaitAll(tasks);
             for (int i = 0; i < resources.Length; i++)
             {
-                containers[i] = tasks[i].Result;
+                var obj = tasks[i].Result;
+                if (obj == null)
+                    continue;
+                containers.Add(obj.Value);
             }
-            return containers;
+            return containers.ToArray();
         }
 
 
@@ -142,12 +145,17 @@ namespace FuraffinityAPI
 
         internal static ResourceContainer[] ParseResourceContainer(HtmlNodeCollection figures)
         {
-            ResourceContainer[] resourceContainers = new ResourceContainer[figures.Count];
+            List<ResourceContainer> resourceContainers = new List<ResourceContainer>();
             for (int i = 0; i < figures.Count; i++)
             {
                 var fig = figures[i];
                 var classes = fig.GetClasses().ToArray();
                 var img = fig.SelectSingleNode(".//img");
+                if (img.Attributes["data-width"] == null)
+                {
+                    continue;
+                }
+
                 var title = fig.SelectSingleNode("./figcaption/p[1]/a");
                 var user = fig.SelectSingleNode("./figcaption/p[2]/a");
                 ResourceContainer container = new ResourceContainer()
@@ -162,15 +170,20 @@ namespace FuraffinityAPI
                     Width = float.Parse(img.Attributes["data-width"].Value),
                     Height = float.Parse(img.Attributes["data-height"].Value)
                 };
-                resourceContainers[i] = container;
+                resourceContainers.Add(container);
             }
-            return resourceContainers;
+            return resourceContainers.ToArray();
         }
 
-        internal static ViewContainer ParseViewContainer(HtmlDocument doc)
+        internal static ViewContainer? ParseViewContainer(HtmlDocument doc)
         {
             string format = "MMM d, yyyy h:mm tt";
-            string[] wh = doc.DocumentNode.SelectSingleNode("//section[@class='info text']/div[4]/span").InnerText.Trim().Replace(" ", "").Split('x');
+            var whn = doc.DocumentNode.SelectSingleNode("//section[@class='info text']/div[4]/span");
+            if (whn == null)
+            {
+                return null;
+            }
+            string[] wh = whn.InnerText.Trim().Replace(" ", "").Split('x');
 
             var tags = doc.DocumentNode.SelectNodes("//section[@class='tags-row']//a");
             string[] a = { };
