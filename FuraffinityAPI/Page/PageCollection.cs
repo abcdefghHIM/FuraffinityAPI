@@ -73,6 +73,14 @@ namespace FuraffinityAPI.Page
                     return obj;
                 }
             }
+            if (queue.Count != 0)
+            {
+                if (queue.TryDequeue(out obj))
+                {
+                    return obj;
+                }
+                return [];
+            }
             return null;
         }
 
@@ -107,6 +115,14 @@ namespace FuraffinityAPI.Page
                 {
                     return obj;
                 }
+            }
+            if (strings.Count != 0)
+            {
+                if (strings.TryDequeue(out obj))
+                {
+                    return obj;
+                }
+                return [];
             }
             return null;
         }
