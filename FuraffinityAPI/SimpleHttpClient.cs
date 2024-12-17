@@ -55,7 +55,8 @@ namespace FuraffinityAPI
                             throw;
                         }
                     }
-                    catch (Exception ex) when ((ex is TaskCanceledException && !((TaskCanceledException)ex).CancellationToken.IsCancellationRequested) || ex is HttpRequestException)
+                    catch(Exception ex)
+                    //catch (Exception ex) when ((ex is TaskCanceledException && !((TaskCanceledException)ex).CancellationToken.IsCancellationRequested) || ex is HttpRequestException)
                     {
                         Console.Write(ex.Message);
                         Console.WriteLine(ex.StackTrace);
